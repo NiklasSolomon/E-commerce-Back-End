@@ -72,8 +72,8 @@ router.post('/', (req, res) => {
     product_name: req.body.product_name,
     price: req.body.price,
     stock: req.body.stock,
-    category_id: req.body.category_id,
-    tagIds: req.body.tag_id
+    tagIds: req.body.tag_id,
+    category_id: req.body.category_id
   })
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -140,6 +140,22 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
+  Product.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(productData => {
+    if (!productData) {
+      res.status(404).json({message: 'Invalid ID'});
+      return;
+    }
+    res.json(productData);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 module.exports = router;
